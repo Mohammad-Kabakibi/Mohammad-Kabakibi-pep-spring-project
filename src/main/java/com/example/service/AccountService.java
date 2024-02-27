@@ -35,7 +35,7 @@ public class AccountService {
         if(!account.getUsername().isBlank() && account.getPassword().length() > 3){
             Account test_account = accountRepository.findByUsername(account.getUsername());
             if(test_account == null){
-                Account new_account = accountRepository.save(account);;
+                Account new_account = accountRepository.save(account);
                 return new MyCustomRegisteredAccount(MyCustomStatus.SUCCESS, new_account);
             }
             return new MyCustomRegisteredAccount(MyCustomStatus.ALREADY_EXIST, null);
