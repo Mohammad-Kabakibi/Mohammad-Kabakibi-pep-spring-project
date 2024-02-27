@@ -65,11 +65,8 @@ public class MessageService {
         return false;
     }
 
-    public List<Message> getMessagesByUser(int user_id){
-        if(user_id >= 0){
-            return messageRepository.findByPosted_by(user_id);
-        }
-        return null;
+    public List<Message> getMessagesByUser(int user_id){ // user_id is validated earlier
+        return messageRepository.findByPosted_by(user_id);
     }
 
 }
