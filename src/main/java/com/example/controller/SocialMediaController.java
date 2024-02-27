@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Account;
 import com.example.entity.Message;
+import com.example.myconfig_test.MyCustomRegisteredAccount;
+import com.example.myconfig_test.MyCustomStatus;
 import com.example.service.AccountService;
 import com.example.service.MessageService;
 
@@ -35,19 +37,42 @@ public class SocialMediaController {
         this.messageService = messageService;
     }
 
-    @PostMapping("/register")
+
+    // @PostMapping("/register") // old solution
+    // public ResponseEntity<Account> registerAccount(@RequestBody Account account){
+    //     try{
+    //         Account new_account = accountService.registerAccount(account);
+    //         if(new_account != null){
+    //             return new ResponseEntity<Account>(new_account, HttpStatus.OK);
+    //         }
+    //         return new ResponseEntity<Account>(HttpStatus.CONFLICT);
+    //     }
+    //     catch(Exception ex){
+    //         System.out.println(ex.getMessage());
+    //         return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
+    //     }
+    // }
+
+
+    @PostMapping("/register") // new solution
     public ResponseEntity<Account> registerAccount(@RequestBody Account account){
         try{
-            Account new_account = accountService.registerAccount(account);
-            if(new_account != null){
-                return new ResponseEntity<Account>(new_account, HttpStatus.OK);
+            MyCustomRegisteredAccount result = accountService.registerAccount(account);
+            switch(result.getStatus()){
+                case MyCustomStatus.ALREADY_EXIST:
+                    return new ResponseEntity<Account>(HttpStatus.CONFLICT);
+
+                case MyCustomStatus.INVALID_VALUES: // this case is not included in the test cases (password < 4 letters / blank username)
+                    return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
+
+                case MyCustomStatus.SUCCESS:
+                    return new ResponseEntity<Account>(result.getAccount(), HttpStatus.OK);
             }
-            return new ResponseEntity<Account>(HttpStatus.CONFLICT);
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());
-            return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<Account>(HttpStatus.BAD_REQUEST);
     }
 
     

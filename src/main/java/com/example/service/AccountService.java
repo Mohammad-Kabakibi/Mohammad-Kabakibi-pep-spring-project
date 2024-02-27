@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.entity.Account;
+import com.example.myconfig_test.MyCustomRegisteredAccount;
+import com.example.myconfig_test.MyCustomStatus;
 import com.example.repository.AccountRepository;
 
 
@@ -17,14 +19,28 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Account registerAccount(Account account){
+
+
+    // public Account registerAccount(Account account){
+    //     if(!account.getUsername().isBlank() && account.getPassword().length() > 3){
+    //         Account test_account = accountRepository.findByUsername(account.getUsername());
+    //         if(test_account == null){
+    //             return accountRepository.save(account);
+    //         }
+    //     }
+    //     return null;
+    // }
+
+    public MyCustomRegisteredAccount registerAccount(Account account){
         if(!account.getUsername().isBlank() && account.getPassword().length() > 3){
             Account test_account = accountRepository.findByUsername(account.getUsername());
             if(test_account == null){
-                return accountRepository.save(account);
+                Account new_account = accountRepository.save(account);;
+                return new MyCustomRegisteredAccount(MyCustomStatus.SUCCESS, new_account);
             }
+            return new MyCustomRegisteredAccount(MyCustomStatus.ALREADY_EXIST, null);
         }
-        return null;
+        return new MyCustomRegisteredAccount(MyCustomStatus.INVALID_VALUES, null);
     }
 
     public Account loginAccount(Account account){
